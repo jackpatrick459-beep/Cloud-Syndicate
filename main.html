@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elite Business Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --accent: #f43f5e;
+            --glass: rgba(255, 255, 255, 0.7);
+            --text: #0f172a;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+            /* Using a high-quality abstract background placeholder */
+            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), 
+                        url('https://images.unsplash.com/photo-1498671546682-94a232c26d17?q=80&w=749&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            width: 100%;
+            max-width: 500px;
+            padding: 40px;
+            border-radius: 32px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        header { text-align: center; margin-bottom: 30px; }
+        header h1 { font-size: 2.2rem; font-weight: 800; color: var(--text); letter-spacing: -1px; }
+        header p { font-size: 0.95rem; color: #475569; margin-top: 5px; }
+
+        .section-label { 
+            font-size: 0.7rem; 
+            text-transform: uppercase; 
+            letter-spacing: 1.5px; 
+            font-weight: 700; 
+            color: var(--primary); 
+            margin-bottom: 12px; 
+            display: block; 
+        }
+
+        .input-row { margin-bottom: 20px; }
+        label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; color: var(--text); }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid rgba(0,0,0,0.1);
+            border-radius: 14px;
+            font-family: inherit;
+            font-size: 1rem;
+            background: rgba(255,255,255,0.9);
+            transition: 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+        }
+
+        /* Status Messages */
+        .status-box {
+            padding: 15px;
+            border-radius: 14px;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            margin-bottom: 20px;
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .pickup-msg { background: #ecfdf5; color: #065f46; border: 1px solid #10b981; }
+        .delivery-box { background: #eef2ff; color: #3730a3; border: 1px solid var(--primary); }
+        .error-msg { background: #fff1f2; color: #9f1239; border: 1px solid var(--accent); }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        .price-summary {
+            background: var(--text);
+            color: white;
+            padding: 20px;
+            border-radius: 20px;
+            text-align: center;
+            margin-top: 25px;
+        }
+        .price-summary span { font-size: 0.8rem; opacity: 0.7; display: block; margin-bottom: 5px; }
+        .price-summary h2 { font-size: 2rem; font-weight: 800; }
+
+        .submit-btn {
+            width: 100%;
+            margin-top: 20px;
+            padding: 18px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .submit-btn:hover { background: #4f46e5; transform: scale(1.02); }
+    </style>
+</head>
+<body>
+
+<div class="glass-card">
+    <header>
+        <h1>Cloud Syndicate</h1>
+        <p>Premium Ordering Experience</p>
+    </header>
+
+    <form id="mainOrderForm">
+        <span class="section-label">Contact Information</span>
+        <div class="input-row">
+            <input type="text" id="custName" placeholder="Your Full Name" required>
+        </div>
+        <div class="input-row">
+            <input type="tel" id="custPhone" placeholder="Phone Number" required>
+        </div>
+
+        <span class="section-label">Order Customization</span>
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 15px; margin-bottom: 20px;">
+            <div>
+                <label>Unit Price</label>
+                <select id="unitPrice">
+                    <option value="50">KSH 50</option>
+                    <option value="70">KSH 70</option>
+                    <option value="100">KSH 100</option>
+                </select>
+            </div>
+            <div>
+                <label>Quantity</label>
+                <input type="number" id="qty" min="1" value="1">
+            </div>
+        </div>
+
+        <div class="input-row">
+            <label>Fulfillment Method</label>
+            <select id="method" onchange="handleMethodChange()">
+                <option value="pickup">Self Pickup</option>
+                <option value="delivery">Doorstep Delivery</option>
+            </select>
+        </div>
+
+        <!-- Dynamic Information Boxes -->
+        <div id="pickupInfo" class="status-box pickup-msg">
+            ✨ <strong>Pickup Selected:</strong> Our team will contact you shortly with the exact location and available time slots. Payments are made upon Pickup.
+        </div>
+
+        <div id="deliveryInfo" class="status-box delivery-box">
+            <label>Delivery Address & Clear Instructions</label>
+            <textarea id="address" rows="3" placeholder="Street, Apartment, Landmarks..."></textarea>
+        </div>
+
+        <div id="qtyError" class="status-box error-msg">
+            🚫 <strong>Delivery Rule:</strong> We only offer delivery for quantities of 3 or more. Please increase quantity or select Pickup.
+        </div>
+
+        <div class="price-summary">
+            <span>TOTAL AMOUNT DUE</span>
+            <h2 id="totalDisplay">KSH 50.00</h2>
+        </div>
+
+        <button type="submit" class="submit-btn" id="submitBtn">Finalize Order</button>
+    </form>
+</div>
+
+<script>
+    const fields = ['unitPrice', 'qty', 'method'];
+    const pickupInfo = document.getElementById('pickupInfo');
+    const deliveryInfo = document.getElementById('deliveryInfo');
+    const qtyError = document.getElementById('qtyError');
+    const submitBtn = document.getElementById('submitBtn');
+    const totalDisplay = document.getElementById('totalDisplay');
+
+    function handleMethodChange() {
+        const qty = parseInt(document.getElementById('qty').value);
+        const method = document.getElementById('method').value;
+
+        // Reset all dynamic views
+        pickupInfo.style.display = 'none';
+        deliveryInfo.style.display = 'none';
+        qtyError.style.display = 'none';
+        submitBtn.disabled = false;
+        submitBtn.style.opacity = '1';
+
+        if (method === 'pickup') {
+            pickupInfo.style.display = 'block';
+        } 
+        else if (method === 'delivery') {
+            if (qty >= 3) {
+                deliveryInfo.style.display = 'block';
+            } else {
+                qtyError.style.display = 'block';
+                submitBtn.disabled = true;
+                submitBtn.style.opacity = '0.5';
+            }
+        }
+        
+        // Calculate Total
+        const total = qty * parseInt(document.getElementById('unitPrice').value);
+        totalDisplay.innerText = `KSH ${total.toFixed(2)}`;
+    }
+
+    // Add listeners to all inputs to trigger logic
+    fields.forEach(id => {
+        document.getElementById(id).addEventListener('input', handleMethodChange);
+    });
+
+    // Run once on load to set initial state
+    handleMethodChange();
+
+    document.getElementById('mainOrderForm').onsubmit = (e) => {
+        e.preventDefault();
+        const name = document.getElementById('custName').value;
+        alert(`Thank you, ${name}! Your order has been logged successfully.`);
+    };
+</script>
+
+</body>
+</html>
