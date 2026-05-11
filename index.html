@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Elite Business Portal</title>
+    <title>Cloud Syndicate</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -186,55 +186,74 @@
 </div>
 
 <script>
-    const fields = ['unitPrice', 'qty', 'method'];
-    const pickupInfo = document.getElementById('pickupInfo');
-    const deliveryInfo = document.getElementById('deliveryInfo');
-    const qtyError = document.getElementById('qtyError');
-    const submitBtn = document.getElementById('submitBtn');
-    const totalDisplay = document.getElementById('totalDisplay');
+    const qtyInput = document.getElementById('qty');
+const unitPriceInput = document.getElementById('unitPrice');
+const methodInput = document.getElementById('method');
+const totalDisplay = document.getElementById('totalDisplay');
+const submitBtn = document.getElementById('submitBtn');
 
-    function handleMethodChange() {
-        const qty = parseInt(document.getElementById('qty').value);
-        const method = document.getElementById('method').value;
+// PASTE YOUR GOOGLE WEB APP URL HERE
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzAH8bkFr_U2MPQ8K4x4YOH5hdlRuoHn4bwHVG4GOmU0E3UzGRM943HX5pdcqymz7i70w/exec";
 
-        // Reset all dynamic views
-        pickupInfo.style.display = 'none';
-        deliveryInfo.style.display = 'none';
-        qtyError.style.display = 'none';
-        submitBtn.disabled = false;
-        submitBtn.style.opacity = '1';
+function handleMethodChange() {
+    const qty = parseInt(qtyInput.value) || 1;
+    const price = parseInt(unitPriceInput.value);
+    const method = methodInput.value;
 
-        if (method === 'pickup') {
-            pickupInfo.style.display = 'block';
-        } 
-        else if (method === 'delivery') {
-            if (qty >= 3) {
-                deliveryInfo.style.display = 'block';
-            } else {
-                qtyError.style.display = 'block';
-                submitBtn.disabled = true;
-                submitBtn.style.opacity = '0.5';
-            }
-        }
-        
-        // Calculate Total
-        const total = qty * parseInt(document.getElementById('unitPrice').value);
-        totalDisplay.innerText = `KSH ${total.toFixed(2)}`;
-    }
+    // Reset views
+    document.getElementById('pickupInfo').style.display = (method === 'pickup') ? 'block' : 'none';
+    document.getElementById('deliveryInfo').style.display = (method === 'delivery' && qty >= 3) ? 'block' : 'none';
+    
+    const isError = (method === 'delivery' && qty < 3);
+    document.getElementById('qtyError').style.display = isError ? 'block' : 'none';
+    submitBtn.disabled = isError;
+    submitBtn.style.opacity = isError ? '0.5' : '1';
 
-    // Add listeners to all inputs to trigger logic
-    fields.forEach(id => {
-        document.getElementById(id).addEventListener('input', handleMethodChange);
-    });
+    const total = qty * price;
+    totalDisplay.innerText = `$${total.toFixed(2)}`;
+}
 
-    // Run once on load to set initial state
-    handleMethodChange();
+// Event Listeners
+[qtyInput, unitPriceInput, methodInput].forEach(el => el.addEventListener('input', handleMethodChange));
 
-    document.getElementById('mainOrderForm').onsubmit = (e) => {
-        e.preventDefault();
-        const name = document.getElementById('custName').value;
-        alert(`Thank you, ${name}! Your order has been logged successfully.`);
+// Handle Form Submission
+document.getElementById('mainOrderForm').onsubmit = async (e) => {
+    e.preventDefault();
+    
+    submitBtn.innerText = "Sending Order...";
+    submitBtn.disabled = true;
+
+    const orderData = {
+        name: document.getElementById('custName').value,
+        phone: document.getElementById('custPhone').value,
+        price: unitPriceInput.value,
+        quantity: qtyInput.value,
+        method: methodInput.value,
+        address: document.getElementById('address').value || "N/A",
+        total: totalDisplay.innerText
     };
+
+    try {
+        await fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors', // Essential for Google Scripts
+            cache: 'no-cache',
+            body: JSON.stringify(orderData)
+        });
+        
+        alert("Success! Your order has been placed.");
+        document.getElementById('mainOrderForm').reset();
+        handleMethodChange();
+    } catch (error) {
+        console.error(error);
+        alert("Error sending order. Please try again.");
+    } finally {
+        submitBtn.innerText = "Finalize Order";
+        submitBtn.disabled = false;
+    }
+};
+
+handleMethodChange();
 </script>
 
 </body>
