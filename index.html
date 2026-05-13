@@ -3,258 +3,308 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Syndicate</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <title>Cloud Syndicate | Official</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@700&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #6366f1;
-            --accent: #f43f5e;
-            --glass: rgba(255, 255, 255, 0.7);
-            --text: #0f172a;
+            --neon-green: #00ff41;
+            --neon-red: #ff003c;
+            --deep-dark: rgba(10, 10, 10, 0.9);
+            --border-glow: rgba(0, 255, 65, 0.3);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
-            font-family: 'Outfit', sans-serif;
+            font-family: 'Space Grotesk', sans-serif;
+            color: white;
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 40px 20px;
-            /* Using a high-quality abstract background placeholder */
-            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), 
-                        url('https://images.unsplash.com/photo-1498671546682-94a232c26d17?q=80&w=749&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+            /* Using a darker, "gritty" street aesthetic background */
+            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), 
+                        url('https://images.unsplash.com/photo-1514924013411-cbf25faa35bb?q=80&w=2000&auto=format&fit=crop');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
         }
 
-        .glass-card {
-            background: var(--glass);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+        .syndicate-card {
+            background: var(--deep-dark);
             width: 100%;
-            max-width: 500px;
+            max-width: 550px;
             padding: 40px;
-            border-radius: 32px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            border: 1px solid var(--neon-green);
+            box-shadow: 0 0 20px var(--border-glow);
+            position: relative;
+            overflow: hidden;
         }
 
-        header { text-align: center; margin-bottom: 30px; }
-        header h1 { font-size: 2.2rem; font-weight: 800; color: var(--text); letter-spacing: -1px; }
-        header p { font-size: 0.95rem; color: #475569; margin-top: 5px; }
-
-        .section-label { 
-            font-size: 0.7rem; 
-            text-transform: uppercase; 
-            letter-spacing: 1.5px; 
-            font-weight: 700; 
-            color: var(--primary); 
-            margin-bottom: 12px; 
-            display: block; 
+        .syndicate-card::before {
+            content: "TOP SECRET";
+            position: absolute;
+            top: 20px;
+            right: -30px;
+            background: var(--neon-red);
+            color: black;
+            font-weight: 800;
+            padding: 5px 40px;
+            transform: rotate(45deg);
+            font-size: 0.7rem;
         }
 
-        .input-row { margin-bottom: 20px; }
-        label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; color: var(--text); }
+        h1 { font-family: 'Syncopate', sans-serif; font-size: 1.8rem; color: var(--neon-green); text-transform: uppercase; margin-bottom: 5px; }
+        .subtitle { font-size: 0.8rem; letter-spacing: 3px; color: #888; margin-bottom: 30px; }
 
-        input, select, textarea {
-            width: 100%;
-            padding: 14px 16px;
-            border: 1px solid rgba(0,0,0,0.1);
-            border-radius: 14px;
-            font-family: inherit;
-            font-size: 1rem;
-            background: rgba(255,255,255,0.9);
-            transition: 0.3s;
-        }
-
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
-        }
-
-        /* Status Messages */
-        .status-box {
+        .product-grid { display: grid; gap: 15px; margin-bottom: 30px; }
+        
+        .item-row {
+            background: rgba(255,255,255,0.05);
             padding: 15px;
-            border-radius: 14px;
-            font-size: 0.85rem;
-            line-height: 1.4;
-            margin-bottom: 20px;
-            display: none;
-            animation: fadeIn 0.4s ease;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 3px solid var(--neon-green);
         }
 
-        .pickup-msg { background: #ecfdf5; color: #065f46; border: 1px solid #10b981; }
-        .delivery-box { background: #eef2ff; color: #3730a3; border: 1px solid var(--primary); }
-        .error-msg { background: #fff1f2; color: #9f1239; border: 1px solid var(--accent); }
+        .item-info h3 { font-size: 1rem; text-transform: uppercase; }
+        .item-info p { color: var(--neon-green); font-weight: 700; font-size: 0.9rem; }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-
-        .price-summary {
-            background: var(--text);
-            color: white;
-            padding: 20px;
-            border-radius: 20px;
-            text-align: center;
-            margin-top: 25px;
-        }
-        .price-summary span { font-size: 0.8rem; opacity: 0.7; display: block; margin-bottom: 5px; }
-        .price-summary h2 { font-size: 2rem; font-weight: 800; }
-
-        .submit-btn {
-            width: 100%;
-            margin-top: 20px;
-            padding: 18px;
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 16px;
-            font-size: 1.1rem;
-            font-weight: 700;
+        .qty-controls { display: flex; align-items: center; gap: 10px; }
+        .qty-btn {
+            background: none;
+            border: 1px solid var(--neon-green);
+            color: var(--neon-green);
+            width: 30px; height: 30px;
             cursor: pointer;
-            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            font-weight: 700;
+            transition: 0.2s;
         }
+        .qty-btn:hover { background: var(--neon-green); color: black; }
+        .qty-val { width: 20px; text-align: center; font-weight: 700; }
 
-        .submit-btn:hover { background: #4f46e5; transform: scale(1.02); }
+        .form-group { margin-bottom: 20px; }
+        input, select, textarea {
+            width: 100%; padding: 12px; background: black; border: 1px solid #333; color: white; border-radius: 4px;
+        }
+        input:focus { border-color: var(--neon-green); outline: none; }
+
+        .total-display {
+            background: var(--neon-green);
+            color: black;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+            margin: 25px 0;
+        }
+        .total-display span { font-size: 0.8rem; font-weight: 700; opacity: 0.7; }
+        .total-display h2 { font-size: 2.2rem; font-weight: 800; font-family: 'Syncopate', sans-serif; }
+
+        .order-btn {
+            width: 100%; padding: 20px; background: none; border: 2px solid var(--neon-green);
+            color: var(--neon-green); font-family: 'Syncopate', sans-serif; cursor: pointer;
+            transition: 0.3s; font-size: 1rem;
+        }
+        .order-btn:hover { background: var(--neon-green); color: black; box-shadow: 0 0 30px var(--neon-green); }
+
+        .msg-box { font-size: 0.8rem; padding: 10px; margin-bottom: 15px; display: none; border-radius: 4px; }
+        .pickup-box { border: 1px solid var(--neon-green); color: var(--neon-green); }
+        .delivery-warn { border: 1px solid var(--neon-red); color: var(--neon-red); }
+
+        .gate-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 9999;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .gate-content {
+            background: #0a0a0a;
+            padding: 40px;
+            border: 2px solid #ff003c; /* Warning Red */
+            text-align: center;
+            max-width: 450px;
+            box-shadow: 0 0 30px rgba(255, 0, 60, 0.2);
+        }
     </style>
 </head>
 <body>
 
-<div class="glass-card">
-    <header>
-        <h1>Cloud Syndicate</h1>
-        <p>Premium Ordering Experience</p>
-    </header>
+<div id="snitch-gate" class="gate-overlay">
+    <div class="gate-content">
+        <h2>PROCEED WITH CAUTION</h2>
+        <p>By entering this portal, you agree to the Syndicate Code:</p>
+        <ul style="text-align: left; margin: 20px 0; color: #ff003c; list-style: none;">
+            <li>⚠️ NO SNITCHING. Direct violations result in permanent blacklisting.</li>
+            <li>⚠️ All coordinates are encrypted. Do not share dead-drop locations.</li>
+            <li>⚠️ Full Payments must be made upon reception of the goods.</li>
+        </ul>
+        <button class="order-btn" onclick="acceptTerms()">I ACCEPT ALL</button>
+    </div>
+</div>
 
-    <form id="mainOrderForm">
-        <span class="section-label">Contact Information</span>
-        <div class="input-row">
-            <input type="text" id="custName" placeholder="Your Full Name" required>
-        </div>
-        <div class="input-row">
-            <input type="tel" id="custPhone" placeholder="Phone Number" required>
-        </div>
+<div class="syndicate-card">
+    <h1>Cloud Syndicate</h1>
+    <p class="subtitle">PREMIUM UNLICENSED GOODS</p>
 
-        <span class="section-label">Order Customization</span>
-        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 15px; margin-bottom: 20px;">
-            <div>
-                <label>Unit Price</label>
-                <select id="unitPrice">
-                    <option value="50">KSH 50</option>
-                    <option value="70">KSH 70</option>
-                    <option value="100">KSH 100</option>
-                </select>
+    <div class="product-grid">
+        <!-- Item 1 -->
+        <div class="item-row">
+            <div class="item-info">
+                <h3>Skank</h3>
+                <p>KSh 50</p>
             </div>
-            <div>
-                <label>Quantity</label>
-                <input type="number" id="qty" min="1" value="1">
+            <div class="qty-controls">
+                <button class="qty-btn" onclick="updateQty('skank', -1)">-</button>
+                <div class="qty-val" id="qty-skank">0</div>
+                <button class="qty-btn" onclick="updateQty('skank', 1)">+</button>
             </div>
         </div>
+        <!-- Item 2 - Option A -->
+        <div class="item-row">
+            <div class="item-info">
+                <h3>Foreign Tier I</h3>
+                <p>KSh 70</p>
+            </div>
+            <div class="qty-controls">
+                <button class="qty-btn" onclick="updateQty('foreign70', -1)">-</button>
+                <div class="qty-val" id="qty-foreign70">0</div>
+                <button class="qty-btn" onclick="updateQty('foreign70', 1)">+</button>
+            </div>
+        </div>
+        <!-- Item 2 - Option B -->
+        <div class="item-row">
+            <div class="item-info">
+                <h3>Foreign Tier II</h3>
+                <p>KSh 100</p>
+            </div>
+            <div class="qty-controls">
+                <button class="qty-btn" onclick="updateQty('foreign100', -1)">-</button>
+                <div class="qty-val" id="qty-foreign100">0</div>
+                <button class="qty-btn" onclick="updateQty('foreign100', 1)">+</button>
+            </div>
+        </div>
+    </div>
 
-        <div class="input-row">
-            <label>Fulfillment Method</label>
-            <select id="method" onchange="handleMethodChange()">
-                <option value="pickup">Self Pickup</option>
-                <option value="delivery">Doorstep Delivery</option>
+    <form id="syndicateForm">
+        <div class="form-group">
+            <input type="text" id="cName" placeholder="OPERATIVE NAME" required>
+        </div>
+        <div class="form-group">
+            <input type="tel" id="cPhone" placeholder="ENCRYPTED LINE (PHONE)" required>
+        </div>
+        <div class="form-group">
+            <select id="method" onchange="calcTotal()">
+                <option value="pickup">DEAD DROP (PICKUP)</option>
+                <option value="delivery">DIRECT COURIER (DELIVERY)</option>
             </select>
         </div>
 
-        <!-- Dynamic Information Boxes -->
-        <div id="pickupInfo" class="status-box pickup-msg">
-            ✨ <strong>Pickup Selected:</strong> Our team will contact you shortly with the exact location and available time slots. Payments are made upon Pickup.
+        <div id="pickupMsg" class="msg-box pickup-box">
+            [SYSTEM]: Our team will make contact shortly with the exact location and available time slots. Payments are made upon pickup.
+        </div>
+        <div id="deliveryMsg" class="msg-box delivery-warn">
+            [ERROR]: Minimum 3 units required for Courier dispatch.
         </div>
 
-        <div id="deliveryInfo" class="status-box delivery-box">
-            <label>Delivery Address & Clear Instructions</label>
-            <textarea id="address" rows="3" placeholder="Street, Apartment, Landmarks..."></textarea>
+        <textarea id="address" style="display:none; margin-bottom: 20px;" placeholder="COURIER ADDRESS & INTEL..."></textarea>
+
+        <div class="total-display">
+            <span>TOTAL DEBT</span>
+            <h2 id="totalVal">KSh 0</h2>
         </div>
 
-        <div id="qtyError" class="status-box error-msg">
-            🚫 <strong>Delivery Rule:</strong> We only offer delivery for quantities of 3 or more. Please increase quantity or select Pickup.
-        </div>
-
-        <div class="price-summary">
-            <span>TOTAL AMOUNT DUE</span>
-            <h2 id="totalDisplay">KSH 50.00</h2>
-        </div>
-
-        <button type="submit" class="submit-btn" id="submitBtn">Finalize Order</button>
+        <button type="submit" class="order-btn" id="orderBtn">CONFIRM TRANSFER</button>
     </form>
 </div>
-
 <script>
-    const qtyInput = document.getElementById('qty');
-const unitPriceInput = document.getElementById('unitPrice');
-const methodInput = document.getElementById('method');
-const totalDisplay = document.getElementById('totalDisplay');
-const submitBtn = document.getElementById('submitBtn');
+let cart = { skank: 0, foreign70: 0, foreign100: 0 };
+const prices = { skank: 50, foreign70: 70, foreign100: 100 };
 
 // PASTE YOUR GOOGLE WEB APP URL HERE
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzAH8bkFr_U2MPQ8K4x4YOH5hdlRuoHn4bwHVG4GOmU0E3UzGRM943HX5pdcqymz7i70w/exec";
 
-function handleMethodChange() {
-    const qty = parseInt(qtyInput.value) || 1;
-    const price = parseInt(unitPriceInput.value);
-    const method = methodInput.value;
-
-    // Reset views
-    document.getElementById('pickupInfo').style.display = (method === 'pickup') ? 'block' : 'none';
-    document.getElementById('deliveryInfo').style.display = (method === 'delivery' && qty >= 3) ? 'block' : 'none';
-    
-    const isError = (method === 'delivery' && qty < 3);
-    document.getElementById('qtyError').style.display = isError ? 'block' : 'none';
-    submitBtn.disabled = isError;
-    submitBtn.style.opacity = isError ? '0.5' : '1';
-
-    const total = qty * price;
-    totalDisplay.innerText = `KSH ${total.toFixed(2)}`;
+function updateQty(item, change) {
+    cart[item] = Math.max(0, cart[item] + change);
+    document.getElementById(`qty-${item}`).innerText = cart[item];
+    calcTotal();
 }
 
-// Event Listeners
-[qtyInput, unitPriceInput, methodInput].forEach(el => el.addEventListener('input', handleMethodChange));
+function calcTotal() {
+    const total = (cart.skank * prices.skank) + (cart.foreign70 * prices.foreign70) + (cart.foreign100 * prices.foreign100);
+    const totalQty = cart.skank + cart.foreign70 + cart.foreign100;
+    const method = document.getElementById('method').value;
+    
+    document.getElementById('totalVal').innerText = `KSh ${total.toLocaleString()}`;
+    
+    // Logic for warnings & visibility
+    document.getElementById('pickupMsg').style.display = (method === 'pickup' && totalQty > 0) ? 'block' : 'none';
+    
+    const deliveryLocked = (method === 'delivery' && totalQty < 3);
+    document.getElementById('deliveryMsg').style.display = deliveryLocked ? 'block' : 'none';
+    document.getElementById('address').style.display = (method === 'delivery' && !deliveryLocked) ? 'block' : 'none';
+    
+    const btn = document.getElementById('orderBtn');
+    btn.disabled = deliveryLocked || totalQty === 0;
+    btn.style.opacity = btn.disabled ? "0.3" : "1";
+}
 
-// Handle Form Submission
-document.getElementById('mainOrderForm').onsubmit = async (e) => {
+function acceptTerms() {
+    document.getElementById('snitch-gate').style.fadeOut = "0.5s";
+    setTimeout(() => {
+        document.getElementById('snitch-gate').style.display = 'none';
+    }, 500);
+}
+
+document.getElementById('syndicateForm').onsubmit = async (e) => {
     e.preventDefault();
     
-    submitBtn.innerText = "Sending Order...";
-    submitBtn.disabled = true;
+    const btn = document.getElementById('orderBtn');
+    btn.innerText = "TRANSMITTING...";
+    btn.disabled = true;
+
+    // We combine the quantities into one "Items" summary for your Google Sheet
+    const itemSummary = `Skank: ${cart.skank} | Foreign70: ${cart.foreign70} | Foreign100: ${cart.foreign100}`;
+    const totalQty = cart.skank + cart.foreign70 + cart.foreign100;
 
     const orderData = {
-        name: document.getElementById('custName').value,
-        phone: document.getElementById('custPhone').value,
-        price: unitPriceInput.value,
-        quantity: qtyInput.value,
-        method: methodInput.value,
+        name: document.getElementById('cName').value,
+        phone: document.getElementById('cPhone').value,
+        price: "Mixed Order", // Since there are multiple prices now
+        quantity: totalQty,
+        method: document.getElementById('method').value,
         address: document.getElementById('address').value || "N/A",
-        total: totalDisplay.innerText
+        total: document.getElementById('totalVal').innerText
     };
 
     try {
         await fetch(GOOGLE_SCRIPT_URL, {
             method: 'POST',
-            mode: 'no-cors', // Essential for Google Scripts
+            mode: 'no-cors', 
             cache: 'no-cache',
-            body: JSON.stringify(orderData)
+            body: JSON.stringify(orderData)         
         });
         
-        alert("Success! Your order has been placed.");
-        document.getElementById('mainOrderForm').reset();
-        handleMethodChange();
+        alert("TRANSMISSION SUCCESSFUL. STAY LOW.");
+        // Reset everything
+        cart = { skank: 0, foreign70: 0, foreign100: 0 };
+        document.querySelectorAll('.qty-val').forEach(el => el.innerText = "0");
+        document.getElementById('syndicateForm').reset();
+        calcTotal();
     } catch (error) {
         console.error(error);
-        alert("Error sending order. Please try again.");
+        alert("TRANSMISSION INTERRUPTED. TRY AGAIN.");
     } finally {
-        submitBtn.innerText = "Finalize Order";
-        submitBtn.disabled = false;
+        btn.innerText = "EXECUTE ORDER";
+        btn.disabled = false;
     }
 };
 
-handleMethodChange();
+// Initial run to set button state
+calcTotal();
 </script>
-
 </body>
 </html>
